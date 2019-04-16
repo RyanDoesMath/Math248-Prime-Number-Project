@@ -1,7 +1,7 @@
 import math
 
 def WheelSieve(maxNum):
-    basis = [2, 3, 5]
+    basis = [2, 3, 5, 7, 11, 13, 17, 19, 23]
     spokes = []
     toRemove = []
     newWheel = []
@@ -12,6 +12,8 @@ def WheelSieve(maxNum):
     for i in basis:
         n = n * i
     for j in range(1, n + 1):
+        if (j > maxNum):
+            break
         spokes.append([j])
     while x*n + h < maxNum:
         for j in spokes:
@@ -20,7 +22,7 @@ def WheelSieve(maxNum):
             h += 1
         x += 1
         h = 1
-    for i in range (1, n + 1):
+    for i in range (1, maxNum + 1):
         for j in basis:
             if i % j == 0 and i not in toRemove:
                 toRemove.append(i)
@@ -32,7 +34,8 @@ def WheelSieve(maxNum):
     for i in newWheel:
         for j in i:
             returnWheel.append(j)
-    returnWheel.remove(1)
+    if 1 in returnWheel:
+        returnWheel.remove(1)
     returnWheel.sort()
     return EratosthenesHelper(maxNum, returnWheel)
 
@@ -54,6 +57,7 @@ def EratosthenesSieve(maxNum):
     for i in range(2, maxNum):
         if i not in composites:
             primes.append(i)
+            print(i, end = "\r")
     return primes
 
 def SundaramSieve(maxNum):
@@ -110,8 +114,4 @@ def AtkinSieve(maxNum):
 
 print(WheelSieve(100))
 print(EratosthenesSieve(100))
-print(SundaramSieve(100))
-print(AtkinSieve(100))
-print(WheelSieve(100) == EratosthenesSieve(100) 
-        == SundaramSieve(100) == AtkinSieve(100))
-
+print(WheelSieve(100) == EratosthenesSieve(100))
