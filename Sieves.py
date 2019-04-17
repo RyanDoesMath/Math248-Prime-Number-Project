@@ -1,81 +1,46 @@
 import math
 
-def WheelSieve(maxNum):
-    basis = [2, 3, 5, 7, 11, 13, 17, 19, 23]
-    spokes = []
-    toRemove = []
-    newWheel = []
-    returnWheel = []
-    h = 1
-    n = 1
-    x = 1
-    for i in basis:
-        n = n * i
-    for j in range(1, n + 1):
-        if (j > maxNum):
-            break
-        spokes.append([j])
-    while x*n + h < maxNum:
-        for j in spokes:
-            if x*n + h < maxNum:
-                j.append(x*n + h)
-            h += 1
-        x += 1
-        h = 1
-    for i in range (1, maxNum + 1):
-        for j in basis:
-            if i % j == 0 and i not in toRemove:
-                toRemove.append(i)
-    for i in spokes:
-        if i[0] not in toRemove:
-            newWheel.append(i)
-        if i[0] in basis:
-            newWheel.append([i[0]])
-    for i in newWheel:
-        for j in i:
-            returnWheel.append(j)
-    if 1 in returnWheel:
-        returnWheel.remove(1)
-    returnWheel.sort()
-    return EratosthenesHelper(maxNum, returnWheel)
-
 def EratosthenesHelper(maxNum, mostlyPrime):
-    checkprimes = EratosthenesSieve(int(math.sqrt(maxNum)))
+    checkprimes = EratosthenesSieve(int(math.sqrt(mostlyPrime[-1])))
     for i in checkprimes:
-        for j in mostlyPrime:
-            if j % i == 0 and i != j:
-                mostlyPrime.remove(j)
-    return mostlyPrime
+        j = 1
+        while i*j < mostlyPrime[-1]:
+            if i*j in mostlyPrime:
+                print(i * j, end = "\r") 
+                mostlyPrime.remove(i*j)
+            j += 1
+    return checkprimes + mostlyPrime
 
 def EratosthenesSieve(maxNum):
-    composites = []
-    primes = []
-    for i in range(2, int(math.sqrt(maxNum))):
-        if i not in composites:
-            for x in range(i * i, maxNum, i):
-                composites.append(x)
-    for i in range(2, maxNum):
-        if i not in composites:
-            primes.append(i)
-            print(i, end = "\r")
-    return primes
+    primes = [True for i in range(maxNum+1)]
+    returnPrimes = []
+    p = 2
+    while p*p <= maxNum:
+        if primes[p] == True:
+            for i in range(p*2, maxNum+1, p):
+                primes[i] = False
+        p += 1
+    for i in range(1, len(primes)):
+        if primes[i] == True:
+            returnPrimes.append(i)
+    returnPrimes.remove(1)
+    return returnPrimes
 
 def SundaramSieve(maxNum):
     m = int((maxNum - 2) / 2)
-    primes = []
-    for i in range(2, m + 1):
-        primes.append(i)
+    primes = [0] * (m + 1)
+    returnPrimes = []
     for i in range(1, m + 1):
-        for j in range(1, m + 1):
-            if j >= i:
-                if i + j + 2*i*j in primes:
-                    primes.remove(i + j + 2*i*j)
-    for i in range(len(primes)):
-        primes[i] = primes[i] * 2 + 1
-    primes.append(2)
-    primes.append(3)
-    primes.sort()
-    return primes
+        j = i
+        while((i + j + 2*i*j) <= m):
+            primes[i + j + 2*i*j] = 1
+            j +=1
+    for i in range(1, m + 1):
+        if (primes[i] == 0):
+            returnPrimes.append((2*i + 1))
+    returnPrimes.append(2)
+    returnPrimes.sort()
+    return returnPrimes
 
 def AtkinSieve(maxNum):
     primes = []
@@ -112,6 +77,3 @@ def AtkinSieve(maxNum):
     primes.sort()
     return primes
 
-print(WheelSieve(100))
-print(EratosthenesSieve(100))
-print(WheelSieve(100) == EratosthenesSieve(100))
